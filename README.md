@@ -1,4 +1,4 @@
-# Laboratorio #4
+# Laboratorio #5
 
 ### Tablas de hash
 
