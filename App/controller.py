@@ -98,3 +98,8 @@ def casting_size(catalog):
 
 def show_movie(catalog, index):
     print(model.show_movie_data(catalog, index))
+
+def production_companies(catalog, production):
+    print('Las películas de la productora son: ')
+    average, size = model.productors_movies(catalog,production)
+    print('Tienen un promedio de ',average, ' y han producido ',size,' películas')

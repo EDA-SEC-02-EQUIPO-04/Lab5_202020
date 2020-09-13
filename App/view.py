@@ -38,9 +38,10 @@ operación seleccionada.
 # ___________________________________________________
 #  Ruta a los archivos
 # ___________________________________________________
-casting_file = config.data_dir + 'MoviesCastingRaw-small.csv'
-details_file = config.data_dir + 'MoviesDetailsCleaned-small.csv'
-
+#casting_file = config.data_dir + 'MoviesCastingRaw-small.csv'
+#details_file = config.data_dir + 'MoviesDetailsCleaned-small.csv'
+casting_file = "Data/Peliculas/MoviesCastingRaw-small.csv"
+details_file = "Data/Peliculas/SmallMoviesDetailsCleaned.csv"
 
 # ___________________________________________________
 #  Funciones para imprimir la inforamación de
@@ -57,6 +58,7 @@ def print_menu():
     print('1- Reinicializar el catálogo de películas.')
     print('2- Cargar datos de películas de los archivos csv.')
     print('3- Consultar información primera y última película.')
+    print('4- Consultar películas de una productora')
     print('0- Salir.')
 
 
@@ -78,6 +80,9 @@ while True:
         controller.show_movie(cont, 1)
         print('La última película de la lista es:')
         controller.show_movie(cont, controller.casting_size(cont))
+    elif int(input_) == 4:
+        production_company = input('Ingrese el nombre de la productora para saber sus películas: ')
+        controller.production_companies(cont,production_company)
     elif int(input_) == 0:
         sys.exit(0)
     else:
