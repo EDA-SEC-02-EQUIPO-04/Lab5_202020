@@ -69,7 +69,8 @@ def load_details(catalog, details_file):
         file_reader = csv.DictReader(input_file, dialect=dialect)
         for movie in file_reader:
             model.add_details(catalog, movie)
-
+            movies = movie['production_companies']
+            model.addMovieProductionCompanies(catalog, movies.strip(), movie['title'])
 
 def load_casting(catalog, casting_file):
     """
@@ -108,5 +109,5 @@ def getMoviesbyProducer(catalog, producer_name):
     """
      Retorna los libros de un autor
     """
-    producerinfo= model.getMovieProducer(catalog, producer_name)
+    producerinfo = model.getMovieProducer(catalog, producer_name)
     return producerinfo

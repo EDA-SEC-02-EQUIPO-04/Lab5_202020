@@ -55,8 +55,8 @@ def printProducerData(producer):
     """
     if producer:
         print('Productora de cine encontrada: ' + producer['name'])
-        print('Promedio: ' + str(producer['average_rating']))
-        print('Total de películas: ' + str(lt.size(['movies'])))
+        print('Promedio: ' + str(producer['vote_average']))
+        print('Total de películas: ' + str(lt.size(producer['movies'])))
         iterator = it.newIterator(producer['movies'])
         while it.hasNext(iterator):
             movie = it.next(iterator)
