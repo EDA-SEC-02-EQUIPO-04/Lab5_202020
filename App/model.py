@@ -52,19 +52,21 @@ def new_catalog():
         #'producer_companies': mp.newMap(200, maptype='PROBING', loadfactor=10, comparefunction=compare_ids)
         #'producer_companies': mp.newMap(4000, maptype='PROBING', loadfactor=0.5, comparefunction=compare_ids)
         'movies_ids': mp.newMap(5000, maptype='PROBING', loadfactor=0.4, comparefunction=compare_ids),
-        'producer_companies': mp.newMap(5000, maptype='PROBING', loadfactor=0.4, comparefunction=compare_producers)
+        'production_companies': mp.newMap(5000, maptype='PROBING', loadfactor=0.4, comparefunction=compare_producers)
     }
     return catalog
 
 def newProducer(name,id):
-    tag = {'name':'',
-           'tag_id':'',
-           'movies': None,
-           'count':0.0}
-    tag['name'] = name
-    tag['tag_id'] = id
-    tad['movies'] = lt.newList()
-    return tag
+    """
+    Crea una nueva estructura para modelar las películas de una compañia de producción
+    y su promedio de ratings
+    """
+    producer = {'name':'',
+                'movies': None,
+                'average_rating':0}
+    producer['name'] = name
+    producer['movies'] = lt.newList('SINGLE_LINKED',compare_producers)
+    return producer
 
 # Funciones para agregar información al catálogo.
 def add_details(catalog, movie):
@@ -85,8 +87,8 @@ def add_casting(catalog, movie):
     mp.put(catalog['movies_ids'], movie['id'], movie)
 
 def addProductionCompanies(catalog, producer_name, movie):
-    producers = catalog['producer_companies']
-    exitproducer = mp.contains(producers, productors_name)
+    producers = catalog['production_companies']
+    exitproducer = mp.contains(producers, producer_name)
     if exitproducer:
         entry = mp.get(producers, producer_name)
         producer = me.getValue(entry)
@@ -133,6 +135,16 @@ def total_average(lista):
         votes += float(movie)
     total_vote_average = votes / total
     return round(total_vote_average,1)
+
+def getMovieProducer(catalog, producerName):
+    """
+    Retorna las películas a partir del nombre de la productora
+    """
+
+    producer = mp.get(catalog['production_companies'], producerName)
+    if producer:
+        return me.getValue(producer)
+    return None
 
 
 def productors_movies(catalog,production):

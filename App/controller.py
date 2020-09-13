@@ -103,3 +103,10 @@ def production_companies(catalog, production):
     print('Las películas de la productora son: ')
     average, size = model.productors_movies(catalog,production)
     print('Tienen un promedio de ',average, ' y han producido ',size,' películas')
+
+def getMoviesbyProducer(catalog, producer_name):
+    """
+     Retorna los libros de un autor
+    """
+    producerinfo= model.getMovieProducer(catalog, producer_name)
+    return producerinfo
