@@ -138,7 +138,6 @@ def total_average(lista):
 def productors_movies(catalog,production):
     lista = lt.newList('ARRAYLIST')
     values_average = lt.newList('ARRAYLIST')
-    lista_movies = lt.newList('ARRAYLIST')
     for i in range(lt.size(catalog['details'])):
         file = lt.getElement(catalog['details'],i)
         if production.strip().lower() == file['production_companies'].strip().lower():
