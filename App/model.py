@@ -48,12 +48,28 @@ def new_catalog():
     catalog = {
         'details': lt.newList('SINGLE_LINKED'),
         'casting': lt.newList('SINGLE_LINKED'),
-        'movies_ids': mp.newMap(200, maptype='PROBING', loadfactor=0.4, comparefunction=compare_ids)
+        #'producer_companies': mp.newMap(1000, maptype='PROBING', loadfactor=2, comparefunction=compare_ids)
+        #'producer_companies': mp.newMap(200, maptype='PROBING', loadfactor=10, comparefunction=compare_ids)
+        #'producer_companies': mp.newMap(4000, maptype='PROBING', loadfactor=0.5, comparefunction=compare_ids)
+        'movies_ids': mp.newMap(5000, maptype='PROBING', loadfactor=0.4, comparefunction=compare_ids),
+        'production_companies': mp.newMap(5000, maptype='PROBING', loadfactor=0.4, comparefunction=compare_producers)
     }
     return catalog
 
+def newProducer(name):
+    """
+    Crea una nueva estructura para modelar las películas de una compañia de producción
+    y su promedio de ratings
+    """
+    producer = {'name':'',
+                'movies': None,
+                'vote_average':0}
+    producer['name'] = name
+    producer['movies'] = lt.newList('SINGLE_LINKED',compare_producers)
+    return producer
 
 # Funciones para agregar información al catálogo.
+
 def add_details(catalog, movie):
     """
     Esta función adiciona detalles a la lista de películas,
@@ -61,7 +77,17 @@ def add_details(catalog, movie):
     """
     lt.addLast(catalog['details'], movie)
     mp.put(catalog['movies_ids'], movie['id'], movie)
-
+    mp.put(catalog['production_companies'], movie['production_companies'], movie)
+    
+def addMovie(catalog, movie):
+    """
+    Esta funcion adiciona una película a la lista de películas,
+    adicionalmente lo guarda en un Map usando como llave su Id.
+    Finalmente crea una entrada en el Map de productoras, para indicar que este
+    la película hace parte de la productora-
+    """
+    lt.addLast(catalog['details'], movie)
+    mp.put(catalog['movies_ids'], movie['production_companies'], movie)
 
 def add_casting(catalog, movie):
     """
@@ -71,10 +97,28 @@ def add_casting(catalog, movie):
     lt.addLast(catalog['casting'], movie)
     mp.put(catalog['movies_ids'], movie['id'], movie)
 
+def addMovieProductionCompanies(catalog, producerName, movie):
+
+    producers = catalog['production_companies']
+    exitproducer = mp.contains(producers, producerName)
+    if exitproducer:
+        entry = mp.get(producers, producerName)
+        producer = me.getValue(entry)
+    else:
+        producer = newProducer(producerName)
+        mp.put(producers, producerName, producer)   
+        average +=   producer['vote_average']
+        average += average
+        
+    lt.addLast(producer['movies'], movie)  
+    
+    
+
 
 # ==============================
 # Funciones de consulta
 # ==============================
+
 def details_size(catalog):
     # Número de detalles en el catálogo.
     return lt.size(catalog['details'])
@@ -91,6 +135,42 @@ def show_movie_data(catalog, index):
             + f'\n   con un puntaje promedio de {el["vote_average"]} y un total de {el["vote_count"]} votaciones,'
             + f'\n   fue estrenada en {el["release_date"]} en el idioma "{el["original_language"]}".')
 
+def total_average(lista):
+    total = lt.size(lista)
+    votes = 0
+    for i in range(lt.size(lista)):
+        movie = lt.getElement(lista,i)
+        votes += float(movie)
+    total_vote_average = votes / total
+    return round(total_vote_average,1)
+
+def getMovieProducer(catalog, producerName):
+    """
+    Retorna las películas a partir del nombre de la productora
+    """
+    producer = mp.get(catalog['production_companies'], producerName)
+    if producer:
+        return me.getValue(producer)
+    return None
+"""
+def productors_movies(catalog,production):
+    lista = lt.newList('ARRAYLIST')
+    values_average = lt.newList('ARRAYLIST')
+    for i in range(lt.size(catalog['details'])):
+        file = lt.getElement(catalog['details'],i)
+        if production.strip().lower() == file['production_companies'].strip().lower():
+            movies = file['title']
+            average = file['vote_average']
+            lt.addLast(values_average,average)
+            lt.addLast(lista,movies)
+
+    for i in range(lt.size(lista)):
+        print('-',lt.getElement(lista,i))
+           
+    average_number = total_average(values_average)
+    return average_number, lt.size(lista)
+"""
+  
 
 # ==============================
 # Funciones de Comparacion
@@ -100,6 +180,15 @@ def compare_ids(id, tag):
     if int(id) == int(entry):
         return 0
     elif int(id) > int(entry):
+        return 1
+    else:
+        return 0
+
+def compare_producers(keyname,producer):
+    proentry = me.getKey(producer)
+    if keyname == proentry:
+        return 0
+    elif keyname > proentry:
         return 1
     else:
         return 0
