@@ -67,7 +67,6 @@ def new_producer(name):
 
 
 # Funciones para agregar información al catálogo.
-
 def add_details(catalog, movie):
     """
     Esta función adiciona detalles a la lista de películas,
@@ -105,11 +104,8 @@ def add_movie_production_companies(catalog, producer_name, movie):
         entry = mp.get(producers, producer_name)
         producer = me.getValue(entry)
     else:
-        producer = newProducer(producer_name)
+        producer = new_producer(producer_name)
         mp.put(producers, producer_name, producer)
-        average += producer['vote_average']
-        average += average
-
     lt.addLast(producer['movies'], movie)
 
 

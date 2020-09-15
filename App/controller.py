@@ -68,9 +68,13 @@ def load_details(catalog, details_file):
     with open(details_file, encoding='utf-8-sig') as input_file:
         file_reader = csv.DictReader(input_file, dialect=dialect)
         for movie in file_reader:
+            strip_movie = {}
+            for key, value in movie.items():
+                strip_movie[key.strip()] = value.strip()
+            movie = strip_movie
             model.add_details(catalog, movie)
-            movies = movie['production_companies']
-            model.add_movie_production_companies(catalog, movies.strip(), movie['title'])
+            # movies = movie['production_companies']
+            # model.add_movie_production_companies(catalog, movies, movie['title'])
 
 
 def load_casting(catalog, casting_file):
@@ -82,6 +86,10 @@ def load_casting(catalog, casting_file):
     with open(casting_file, encoding='utf-8-sig') as input_file:
         file_reader = csv.DictReader(input_file, dialect=dialect)
         for movie in file_reader:
+            strip_movie = {}
+            for key, value in movie.items():
+                strip_movie[key.strip()] = value.strip()
+            movie = strip_movie
             model.add_casting(catalog, movie)
 
 

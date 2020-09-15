@@ -50,7 +50,7 @@ details_file = config.data_dir + 'MoviesDetailsCleaned-small.csv'
 #  el controlador.
 # ___________________________________________________
 
-def printProducerData(producer):
+def print_producer_data(producer):
     """
     Imprime los libros de un autor determinado
     """
@@ -61,7 +61,7 @@ def printProducerData(producer):
         iterator = it.newIterator(producer['movies'])
         while it.hasNext(iterator):
             movie = it.next(iterator)
-            print('Titulo: ' + movie['title'] + 'Vote Average ' + ['vote_average'])
+            print('Titulo: ' + movie['title'] + 'Vote Average ' + movie['vote_average'])
     else:
         print('No se encontro la productora')
 
@@ -98,8 +98,8 @@ while True:
         controller.show_movie(cont, controller.casting_size(cont))
     elif int(input_) == 4:
         production_company = input('Ingrese el nombre de la productora para saber sus películas: ')
-        producerinfo = controller.getMoviesbyProducer(cont, production_company)
-        printProducerData(producerinfo)
+        producerinfo = controller.get_movies_by_producer(cont, production_company)
+        print_producer_data(producerinfo)
     elif int(input_) == 0:
         sys.exit(0)
     else:
