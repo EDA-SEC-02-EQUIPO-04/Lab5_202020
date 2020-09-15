@@ -38,10 +38,11 @@ operación seleccionada.
 # ___________________________________________________
 #  Ruta a los archivos
 # ___________________________________________________
-#casting_file = config.data_dir + 'MoviesCastingRaw-small.csv'
-#details_file = config.data_dir + 'MoviesDetailsCleaned-small.csv'
-casting_file = "Data/Peliculas/MoviesCastingRaw-small.csv"
-details_file = "Data/Peliculas/SmallMoviesDetailsCleaned.csv"
+casting_file = config.data_dir + 'MoviesCastingRaw-small.csv'
+details_file = config.data_dir + 'MoviesDetailsCleaned-small.csv'
+# casting_file = "Data/Peliculas/MoviesCastingRaw-small.csv"
+# details_file = "Data/Peliculas/SmallMoviesDetailsCleaned.csv"
+
 
 # ___________________________________________________
 #  Funciones para imprimir la inforamación de
@@ -63,6 +64,8 @@ def printProducerData(producer):
             print('Titulo: ' + movie['title'] + 'Vote Average ' + ['vote_average'])
     else:
         print('No se encontro la productora')
+
+
 # ___________________________________________________
 #  Menu principal
 # ___________________________________________________
@@ -95,7 +98,7 @@ while True:
         controller.show_movie(cont, controller.casting_size(cont))
     elif int(input_) == 4:
         production_company = input('Ingrese el nombre de la productora para saber sus películas: ')
-        producerinfo = controller.getMoviesbyProducer(cont,production_company)
+        producerinfo = controller.getMoviesbyProducer(cont, production_company)
         printProducerData(producerinfo)
     elif int(input_) == 0:
         sys.exit(0)
