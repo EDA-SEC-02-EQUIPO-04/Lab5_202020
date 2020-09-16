@@ -40,6 +40,8 @@ operación seleccionada.
 # ___________________________________________________
 casting_file = config.data_dir + 'MoviesCastingRaw-small.csv'
 details_file = config.data_dir + 'MoviesDetailsCleaned-small.csv'
+
+
 # casting_file = "Data/Peliculas/MoviesCastingRaw-small.csv"
 # details_file = "Data/Peliculas/SmallMoviesDetailsCleaned.csv"
 
@@ -52,18 +54,9 @@ details_file = config.data_dir + 'MoviesDetailsCleaned-small.csv'
 
 def print_producer_data(producer):
     """
-    Imprime los libros de un autor determinado
+    Imprime las películas de una productora.
     """
-    if producer:
-        print('Productora de cine encontrada: ' + producer['name'])
-        print('Promedio: ' + str(producer['vote_average']))
-        print('Total de películas: ' + str(lt.size(producer['movies'])))
-        iterator = it.newIterator(producer['movies'])
-        while it.hasNext(iterator):
-            movie = it.next(iterator)
-            print('Titulo: ' + movie['title'] + 'Vote Average ' + movie['vote_average'])
-    else:
-        print('No se encontro la productora')
+    controller.show_producer_data(producer)
 
 
 # ___________________________________________________
@@ -97,7 +90,7 @@ while True:
         print('La última película de la lista es:')
         controller.show_movie(cont, controller.casting_size(cont))
     elif int(input_) == 4:
-        production_company = input('Ingrese el nombre de la productora para saber sus películas: ')
+        production_company = input('Ingrese el nombre de la productora para saber sus películas: ').strip().capitalize()
         producerinfo = controller.get_movies_by_producer(cont, production_company)
         print_producer_data(producerinfo)
     elif int(input_) == 0:

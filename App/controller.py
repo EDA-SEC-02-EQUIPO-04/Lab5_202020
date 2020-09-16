@@ -73,8 +73,9 @@ def load_details(catalog, details_file):
                 strip_movie[key.strip()] = value.strip()
             movie = strip_movie
             model.add_details(catalog, movie)
-            # movies = movie['production_companies']
-            # model.add_movie_production_companies(catalog, movies, movie['title'])
+            producer_names = movie['production_companies'].split(",")
+            for producer in producer_names:
+                model.add_movie_production_companies(catalog, producer, movie)
 
 
 def load_casting(catalog, casting_file):
@@ -112,13 +113,17 @@ def show_movie(catalog, index):
 
 def production_companies(catalog, production):
     print('Las películas de la productora son: ')
-    average, size = model.productors_movies(catalog, production)
+    average, size = get_movies_by_producer(catalog, production)
     print('Tienen un promedio de ', average, ' y han producido ', size, ' películas')
 
 
 def get_movies_by_producer(catalog, producer_name):
     """
-     Retorna los libros de un autor
+     Retorna las películas de una productora.
     """
     producerinfo = model.get_movie_producer(catalog, producer_name)
     return producerinfo
+
+
+def show_producer_data(producer):
+    model.show_producer_data(producer)
