@@ -21,6 +21,7 @@
  """
 import config
 from DISClib.ADT import list as lt
+from DISClib.DataStructures import listiterator as it
 from DISClib.ADT import map as mp
 from DISClib.DataStructures import mapentry as me
 
@@ -41,78 +42,78 @@ def new_catalog():
     Crea una lista vacia para guardar todas las películas.
 
     Se crean indices (Maps) por los siguientes criterios:
-    ID películas
+    id películas
 
     Retorna el catálogo inicializado.
     """
     catalog = {
         'details': lt.newList('SINGLE_LINKED'),
         'casting': lt.newList('SINGLE_LINKED'),
-        #'producer_companies': mp.newMap(1000, maptype='PROBING', loadfactor=2, comparefunction=compare_ids)
-        #'producer_companies': mp.newMap(200, maptype='PROBING', loadfactor=10, comparefunction=compare_ids)
-        #'producer_companies': mp.newMap(4000, maptype='PROBING', loadfactor=0.5, comparefunction=compare_ids)
+        # 'producer_companies': mp.newMap(1000, maptype='PROBING', loadfactor=2, comparefunction=compare_ids)
+        # 'producer_companies': mp.newMap(200, maptype='PROBING', loadfactor=10, comparefunction=compare_ids)
+        # 'producer_companies': mp.newMap(4000, maptype='PROBING', loadfactor=0.5, comparefunction=compare_ids)
         'movies_ids': mp.newMap(5000, maptype='PROBING', loadfactor=0.4, comparefunction=compare_ids),
-        'production_companies': mp.newMap(5000, maptype='PROBING', loadfactor=0.4, comparefunction=compare_producers)
+        'production_companies': mp.newMap(1000, maptype='PROBING', loadfactor=0.4, comparefunction=compare_producers)
     }
     return catalog
 
-def newProducer(name):
+
+def new_producer(name):
     """
     Crea una nueva estructura para modelar las películas de una compañia de producción
     y su promedio de ratings
     """
-    producer = {'name':'',
-                'movies': None,
-                'vote_average':0}
-    producer['name'] = name
-    producer['movies'] = lt.newList('SINGLE_LINKED',compare_producers)
+    producer = {'name': name, 'movies': lt.newList('SINGLE_LINKED', compare_producers), 'average_rating': 0}
     return producer
 
-# Funciones para agregar información al catálogo.
 
+# Funciones para agregar información al catálogo.
 def add_details(catalog, movie):
     """
     Esta función adiciona detalles a la lista de películas,
-    adicionalmente los guarda en un Map usando como llave su Id.
+    adicionalmente los guarda en un Map usando como llave su id.
     """
     lt.addLast(catalog['details'], movie)
     mp.put(catalog['movies_ids'], movie['id'], movie)
-    mp.put(catalog['production_companies'], movie['production_companies'], movie)
-    
-def addMovie(catalog, movie):
+
+
+def add_movie(catalog, movie):
     """
     Esta funcion adiciona una película a la lista de películas,
-    adicionalmente lo guarda en un Map usando como llave su Id.
+    adicionalmente lo guarda en un Map usando como llave su id.
     Finalmente crea una entrada en el Map de productoras, para indicar que este
     la película hace parte de la productora-
     """
     lt.addLast(catalog['details'], movie)
     mp.put(catalog['movies_ids'], movie['production_companies'], movie)
 
+
 def add_casting(catalog, movie):
     """
     Esta función adiciona un elenco a la lista de películas,
-    adicionalmente lo guarda en un Map usando como llave su Id.
+    adicionalmente lo guarda en un Map usando como llave su id.
     """
     lt.addLast(catalog['casting'], movie)
     mp.put(catalog['movies_ids'], movie['id'], movie)
 
-def addMovieProductionCompanies(catalog, producerName, movie):
 
+def add_movie_production_companies(catalog, producer_name, movie):
     producers = catalog['production_companies']
-    exitproducer = mp.contains(producers, producerName)
-    if exitproducer:
-        entry = mp.get(producers, producerName)
+    existproducer = mp.contains(producers, producer_name)
+    if existproducer:
+        entry = mp.get(producers, producer_name)
         producer = me.getValue(entry)
     else:
-        producer = newProducer(producerName)
-        mp.put(producers, producerName, producer)   
-        average +=   producer['vote_average']
-        average += average
-        
-    lt.addLast(producer['movies'], movie)  
-    
-    
+        producer = new_producer(producer_name)
+        mp.put(producers, producer_name, producer)
+    lt.addLast(producer['movies'], movie)
+    # Producer vote average.
+    producer_avg = producer['average_rating']
+    movie_avg = movie['vote_average']
+    if producer_avg == 0.0:
+        producer['average_rating'] = float(movie_avg)
+    else:
+        producer['average_rating'] = (producer_avg + float(movie_avg)) / 2
 
 
 # ==============================
@@ -135,23 +136,43 @@ def show_movie_data(catalog, index):
             + f'\n   con un puntaje promedio de {el["vote_average"]} y un total de {el["vote_count"]} votaciones,'
             + f'\n   fue estrenada en {el["release_date"]} en el idioma "{el["original_language"]}".')
 
+
+def show_producer_data(producer):
+    """
+    Imprime las películas de una productara.
+    """
+    if producer:
+        print('Productora de cine encontrada: ' + producer['name'])
+        print('Promedio: ' + str(producer['average_rating']))
+        print('Total de películas: ' + str(lt.size(producer['movies'])))
+        iterator = it.newIterator(producer['movies'])
+        while it.hasNext(iterator):
+            movie = it.next(iterator)
+            print('Título: ' + movie['title'] + ' | Vote Average: ' + movie['vote_average'])
+    else:
+        print('No se encontró la productora')
+
+
 def total_average(lista):
     total = lt.size(lista)
     votes = 0
     for i in range(lt.size(lista)):
-        movie = lt.getElement(lista,i)
+        movie = lt.getElement(lista, i)
         votes += float(movie)
     total_vote_average = votes / total
-    return round(total_vote_average,1)
+    return round(total_vote_average, 1)
 
-def getMovieProducer(catalog, producerName):
+
+def get_movie_producer(catalog, producer_name):
     """
     Retorna las películas a partir del nombre de la productora
     """
-    producer = mp.get(catalog['production_companies'], producerName)
+    producer = mp.get(catalog['production_companies'], producer_name)
     if producer:
         return me.getValue(producer)
     return None
+
+
 """
 def productors_movies(catalog,production):
     lista = lt.newList('ARRAYLIST')
@@ -170,25 +191,26 @@ def productors_movies(catalog,production):
     average_number = total_average(values_average)
     return average_number, lt.size(lista)
 """
-  
+
 
 # ==============================
 # Funciones de Comparacion
 # ==============================
-def compare_ids(id, tag):
+def compare_ids(id_, tag):
     entry = me.getKey(tag)
-    if int(id) == int(entry):
+    if int(id_) == int(entry):
         return 0
-    elif int(id) > int(entry):
+    elif int(id_) > int(entry):
         return 1
     else:
         return 0
 
-def compare_producers(keyname,producer):
+
+def compare_producers(keyname, producer):
     proentry = me.getKey(producer)
     if keyname == proentry:
         return 0
     elif keyname > proentry:
         return 1
     else:
-        return 0
+        return -1
