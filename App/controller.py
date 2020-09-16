@@ -23,6 +23,7 @@
 import config as cf
 from App import model
 import csv
+from time import process_time
 
 """
 El controlador se encarga de mediar entre la vista y el modelo.
@@ -41,7 +42,10 @@ def init_catalog():
     Llama la funcion de inicializacion del catalogo del modelo.
     """
     # catalog es utilizado para interactuar con el modelo.
+    t1_start = process_time()  # tiempo inicial
     catalog = model.new_catalog()
+    t1_stop = process_time()  # tiempo final
+    print('Tiempo de ejecución ', t1_stop - t1_start, ' segundos')
     return catalog
 
 
@@ -53,8 +57,11 @@ def load_data(catalog, casting_file, details_file):
     """
     Carga los datos de los archivos en el modelo
     """
+    t1_start = process_time()  # tiempo inicial
     load_details(catalog, details_file)
     load_casting(catalog, casting_file)
+    t1_stop = process_time()  # tiempo final
+    print('Tiempo de ejecución ', t1_stop - t1_start, ' segundos')
 
 
 def load_details(catalog, details_file):
@@ -108,13 +115,19 @@ def casting_size(catalog):
 
 
 def show_movie(catalog, index):
+    t1_start = process_time()  # tiempo inicial
     print(model.show_movie_data(catalog, index))
+    t1_stop = process_time()  # tiempo final
+    print('Tiempo de ejecución ', t1_stop - t1_start, ' segundos')
 
 
 def production_companies(catalog, production):
+    t1_start = process_time()  # tiempo inicial
     print('Las películas de la productora son: ')
     average, size = get_movies_by_producer(catalog, production)
     print('Tienen un promedio de ', average, ' y han producido ', size, ' películas')
+    t1_stop = process_time()  # tiempo final
+    print('Tiempo de ejecución ', t1_stop - t1_start, ' segundos')
 
 
 def get_movies_by_producer(catalog, producer_name):
@@ -126,4 +139,7 @@ def get_movies_by_producer(catalog, producer_name):
 
 
 def show_producer_data(producer):
+    t1_start = process_time()  # tiempo inicial
     model.show_producer_data(producer)
+    t1_stop = process_time()  # tiempo final
+    print('Tiempo de ejecución ', t1_stop - t1_start, ' segundos')
